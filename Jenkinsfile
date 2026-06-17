@@ -18,8 +18,15 @@ pipeline {
         }
         stage("Run Tests"){
             steps {
-                sh 'dotnet test --no-build'
+                sh 'dotnet test --no-build --logger "trx" --results-directory TestResults'
             }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '**/TestResults/*.trx', allowEmptyArchive: true
+            junit '**/TestResults/*.trx'
         }
     }
 }
